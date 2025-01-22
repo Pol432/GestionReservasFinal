@@ -77,8 +77,20 @@ public class App {
             throw new Exception("Cédula inválida. Debe ingresar 10 caracteres numéricos.");
         }
 
+        if (!Usuario.validarNombre(nombre)) {
+            throw new Exception("Nombre inválido");
+        }
+
         if (!Usuario.validarCorreo(correo)) {
             throw new Exception("Correo ingresado es inválido");
+        }
+
+        if (!Usuario.validarTelefono(telefono)) {
+            throw new Exception("Teléfono inválido");
+        }
+
+        if (!Usuario.validarCiudad(ciudad)) {
+            throw new Exception("Ciudad inválida");
         }
 
         // Validar que la cédula y el correo no existan ya

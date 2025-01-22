@@ -51,7 +51,7 @@ public class ReservaEquipoPanel extends JPanel {
         add(duracionSpinner);
 
         // Botón de reservar
-        JButton reservarButton = new JButton("Reservar Equipo");
+        JButton reservarButton = new JButton("Préstamo de Equipo");
         reservarButton.addActionListener(e -> realizarReserva());
 
         add(new JLabel(""));
@@ -60,7 +60,6 @@ public class ReservaEquipoPanel extends JPanel {
 
     private void actualizarEquiposDisponibles() {
         List<String> equiposDisponibles = App.getEquipos().stream()
-                .filter(eq -> !eq.isPrestado())
                 .map(Equipo::getNombre)
                 .toList();
 

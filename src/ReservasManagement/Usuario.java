@@ -166,13 +166,59 @@ public class Usuario {
     }
 
     public static boolean validarcedula(String cedula) {
-        // Validar que la cédula tenga exactamente 10 caracteres
-        if (cedula == null || cedula.length() != 10) {
+        // Validaciones iniciales
+        if (cedula == null || cedula.length() != 10 || !cedula.matches("\\d+")) {
             return false;
         }
 
-        // Validar que todos los caracteres sean numéricos
-        return cedula.matches("\\d+");
+        try {
+            // Validar región (2 primeros dígitos)
+            int digitoRegion = Integer.parseInt(cedula.substring(0, 2));
+            if (digitoRegion < 1 || digitoRegion > 24) {
+                return false;
+            }
+
+            // Obtener el último dígito
+            int ultimoDigito = Integer.parseInt(cedula.substring(9, 10));
+
+            // Calcular suma de pares
+            int sumaPares = Character.getNumericValue(cedula.charAt(1)) +
+                    Character.getNumericValue(cedula.charAt(3)) +
+                    Character.getNumericValue(cedula.charAt(5)) +
+                    Character.getNumericValue(cedula.charAt(7));
+
+            // Calcular suma de impares
+            int sumaImpares = 0;
+            int[] posicionesImpares = {0, 2, 4, 6, 8};
+
+            for (int pos : posicionesImpares) {
+                int numero = Character.getNumericValue(cedula.charAt(pos)) * 2;
+                if (numero > 9) {
+                    numero -= 9;
+                }
+                sumaImpares += numero;
+            }
+
+            // Calcular suma total
+            int sumaTotal = sumaPares + sumaImpares;
+
+            // Obtener decena inmediata superior
+            int decena = ((sumaTotal / 10) + 1) * 10;
+
+            // Calcular dígito validador
+            int digitoValidador = decena - sumaTotal;
+
+            // Si el dígito validador es 10, se convierte a 0
+            if (digitoValidador == 10) {
+                digitoValidador = 0;
+            }
+
+            // Validar que el dígito validador sea igual al último dígito de la cédula
+            return digitoValidador == ultimoDigito;
+
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return false;
+        }
     }
 
     public static boolean validarCorreo(String correo) {
@@ -182,6 +228,70 @@ public class Usuario {
         Pattern pattern = Pattern.compile(regex);
         // Verificar si el correo coincide con la expresión regular
         return correo != null && pattern.matcher(correo).matches();
+    }
+
+    public static boolean validarCiudad(String ciudad) {
+        String[] CIUDADES_ECUADOR = {
+                // Costa
+                "Guayaquil", "Manta", "Portoviejo", "Machala", "Babahoyo", "Quevedo", "Esmeraldas",
+                "Santa Elena", "Playas", "Daule", "Milagro", "Durán", "La Libertad", "Salinas",
+
+                // Sierra
+                "Quito", "Cuenca", "Ambato", "Riobamba", "Loja", "Ibarra", "Latacunga", "Azogues",
+                "Guaranda", "Tulcán", "Cayambe", "Otavalo", "Sangolquí", "Conocoto",
+
+                // Oriente
+                "Puyo", "Tena", "Macas", "Nueva Loja", "Zamora",
+        };
+        // Si la ciudad es null o está vacía, retorna false
+        if (ciudad == null || ciudad.trim().isEmpty()) {
+            return false;
+        }
+
+        // Normaliza el nombre de la ciudad (primera letra mayúscula, resto minúsculas)
+        String ciudadNormalizada = normalizarNombreCiudad(ciudad);
+
+        // Busca la ciudad en el array
+        for (String ciudadEcuador : CIUDADES_ECUADOR) {
+            if (ciudadEcuador.equals(ciudadNormalizada)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static String normalizarNombreCiudad(String ciudad) {
+        ciudad = ciudad.trim();
+        if (ciudad.isEmpty()) {
+            return ciudad;
+        }
+
+        // Maneja ciudades con múltiples palabras
+        String[] palabras = ciudad.toLowerCase().split(" ");
+        StringBuilder resultado = new StringBuilder();
+
+        for (int i = 0; i < palabras.length; i++) {
+            if (!palabras[i].isEmpty()) {
+                resultado.append(Character.toUpperCase(palabras[i].charAt(0)))
+                        .append(palabras[i].substring(1));
+                if (i < palabras.length - 1) {
+                    resultado.append(" ");
+                }
+            }
+        }
+
+        return resultado.toString();
+    }
+
+    public static boolean validarTelefono(String telefono) {
+        if (telefono == null) return false;
+        String num = telefono.replaceAll("[ -]", "");
+        return num.matches("^(0[2-7][0-9]{7}|09[6-9][0-9]{7})$");
+    }
+
+    public static boolean validarNombre(String texto) {
+        return texto != null && texto.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+");
     }
 
     public boolean devolverEquipo(Equipo equipo, DetalleReserva reserva) {

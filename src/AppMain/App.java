@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import ReservasManagement.*;
 
 public class App {
+    private ReservasTablaPanel reservasTablaPanel;
+
     private static List<Equipo> equipos = new ArrayList<>();
     private static List<DetalleReserva> reservas = new ArrayList<>();
     private static List<Estudiante> estudiantes = new ArrayList<>();
@@ -63,7 +65,32 @@ public class App {
         equipos.add(e1);
         equipos.add(e2);
         equipos.add(e3);
+
+        // Crear usuarios predeterminados
+        Administrador admin = new Administrador(
+                "1721654984", // Cédula
+                "David", // Nombre
+                "charles@udla.ec", // Correo
+                "Quito", // Ciudad
+                "1234", // Contraseña
+                "0995949438" // Teléfono
+        );
+
+        Estudiante estudiante = new Estudiante(
+                "0501986061", // Cédula
+                "Paul", // Nombre
+                "paul@udla.ec", // Correo
+                "Quito", // Ciudad
+                "1234", // Contraseña
+                "0995949438", // Teléfono
+                "Carrera", // Carrera (puedes personalizarla)
+                1 // Nivel académico
+        );
+
+        administradores.add(admin);
+        estudiantes.add(estudiante);
     }
+
 
 
     public void agregarUsuario(String cedula, String nombre, String correo, String clave, String telefono, String ciudad, String tipoUsuario) throws Exception
@@ -136,6 +163,10 @@ public class App {
 
         throw new Exception("Credecianles inválidas");
     }
+    public ReservasTablaPanel getReservasTablaPanel() {
+        return reservasTablaPanel;
+    }
+
 
     public void agregarReserva(DetalleReserva reserva) {
         reservas.add(reserva);
@@ -161,6 +192,7 @@ public class App {
     public void eliminarEquipo(Equipo equipo) {
         equipos.remove(equipo);
     }
+
 
     public Equipo buscarEquipoPorNombre(String nombre) {
         return equipos.stream()

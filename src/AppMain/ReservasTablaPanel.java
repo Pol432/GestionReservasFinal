@@ -20,8 +20,9 @@ public class ReservasTablaPanel extends JPanel {
 
         // Crear modelo y tabla
         modeloReservas = new DefaultTableModel(
-                new String[]{"Número", "Tipo", "Fecha", "Detalles"}, 0
+                new String[]{"Número", "Tipo", "Fecha", "Detalles", "Usuario"}, 0 // Añadimos "Usuario"
         );
+
         tablaReservas = new JTable(modeloReservas);
 
         // Añadir tabla con scroll
@@ -38,34 +39,55 @@ public class ReservasTablaPanel extends JPanel {
 
     public void actualizarTabla(Usuario usuario) {
         modeloReservas.setRowCount(0);
-        for (DetalleReserva reserva : usuario.getReservas()) {
-            String detalles;
-            String tipo;
 
-            if (reserva instanceof DetalleReservaLaboratorio) {
-                DetalleReservaLaboratorio reservaLab = (DetalleReservaLaboratorio) reserva;
-                tipo = "Laboratorio";
-                detalles = String.format("%s, %s-%s, %d ocupantes",
-                        reservaLab.getLaboratorioReservado(),
-                        reservaLab.getHoraInicio().toString(),
-                        reservaLab.getHoraFin().toString(),
-                        reservaLab.getNumeroOcupantes());
-            } else {
-                DetalleReservaEquipo reservaEquipo = (DetalleReservaEquipo) reserva;
-                tipo = "Equipo";
-                detalles = String.format("%s, %d días",
-                        reservaEquipo.getEquipo().getNombre(),
-                        reservaEquipo.getDuracion());
+        // Verificar si el usuario es administrador
+        boolean esAdministrador = usuario instanceof Administrador;
+
+        if (esAdministrador) {
+            // Mostrar todas las reservas si es administrador
+            for (DetalleReserva reserva : app.getReservas()) {
+                agregarReservaATabla(reserva);
             }
-
-            modeloReservas.addRow(new Object[]{
-                    reserva.getNumeroReserva(),
-                    tipo,
-                    reserva.getFecha(),
-                    detalles
-            });
+        } else {
+            // Mostrar solo las reservas del usuario si no es administrador
+            for (DetalleReserva reserva : usuario.getReservas()) {
+                agregarReservaATabla(reserva);
+            }
         }
     }
+
+    // Método auxiliar para agregar reservas al modelo de la tabla
+    private void agregarReservaATabla(DetalleReserva reserva) {
+        String detalles;
+        String tipo;
+
+        if (reserva instanceof DetalleReservaLaboratorio) {
+            DetalleReservaLaboratorio reservaLab = (DetalleReservaLaboratorio) reserva;
+            tipo = "Laboratorio";
+            detalles = String.format("%s, %s-%s, %d ocupantes",
+                    reservaLab.getLaboratorioReservado(),
+                    reservaLab.getHoraInicio().toString(),
+                    reservaLab.getHoraFin().toString(),
+                    reservaLab.getNumeroOcupantes());
+        } else {
+            DetalleReservaEquipo reservaEquipo = (DetalleReservaEquipo) reserva;
+            tipo = "Equipo";
+            detalles = String.format("%s, %d días",
+                    reservaEquipo.getEquipo().getNombre(),
+                    reservaEquipo.getDuracion());
+        }
+
+        // Agregar los datos, incluyendo el nombre del usuario
+        modeloReservas.addRow(new Object[]{
+                reserva.getNumeroReserva(),
+                tipo,
+                reserva.getFecha(),
+                detalles,
+                reserva.getUsuario().getNombre() // Agregar el nombre del usuario
+        });
+    }
+
+
 
     private void eliminarReservaSeleccionada() {
         int filaSeleccionada = tablaReservas.getSelectedRow();

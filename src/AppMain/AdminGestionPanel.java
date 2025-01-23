@@ -171,11 +171,65 @@ public class AdminGestionPanel extends JPanel {
         String nombreEquipo = (String) tablaEquipos.getValueAt(selectedRow, 0);
         Equipo equipo = app.buscarEquipoPorNombre(nombreEquipo);
         if (equipo != null) {
+            // Buscar y eliminar reservas asociadas al equipo
+            List<DetalleReserva> reservasAsociadas = app.getReservas().stream()
+                    .filter(reserva -> reserva instanceof DetalleReservaEquipo &&
+                            ((DetalleReservaEquipo) reserva).getEquipo().equals(equipo))
+                    .toList();
+
+            for (DetalleReserva reserva : reservasAsociadas) {
+                reserva.getUsuario().eliminarReserva(reserva);
+                app.eliminarReserva(reserva);
+            }
+
+            // Eliminar el equipo de la lista de equipos
             app.eliminarEquipo(equipo);
-            JOptionPane.showMessageDialog(this, "Equipo eliminado exitosamente.");
+
+            JOptionPane.showMessageDialog(this, "Equipo eliminado exitosamente, junto con sus reservas asociadas.");
             actualizarTablaEquipos();
+
+            // **Actualizar tabla de reservas del administrador**
+            if (app.getReservasTablaPanel() != null) {
+                app.getReservasTablaPanel().actualizarTabla(administrador); // Llama al método que actualiza la tabla de reservas
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "El equipo no se encontró.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    private void eliminarLaboratorio() {
+        int selectedRow = tablaLaboratorios.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un laboratorio para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String nombreLaboratorio = (String) tablaLaboratorios.getValueAt(selectedRow, 0);
+
+        // Buscar y eliminar reservas asociadas al laboratorio
+        List<DetalleReserva> reservasAsociadas = app.getReservas().stream()
+                .filter(reserva -> reserva instanceof DetalleReservaLaboratorio &&
+                        ((DetalleReservaLaboratorio) reserva).getLaboratorioReservado().equals(nombreLaboratorio))
+                .toList();
+
+        for (DetalleReserva reserva : reservasAsociadas) {
+            reserva.getUsuario().eliminarReserva(reserva);
+            app.eliminarReserva(reserva);
+        }
+
+        // Eliminar el laboratorio de la lista de laboratorios
+        app.eliminarLaboratorio(nombreLaboratorio);
+
+        JOptionPane.showMessageDialog(this, "Laboratorio eliminado exitosamente, junto con sus reservas asociadas.");
+        actualizarTablaLaboratorios();
+
+        // **Actualizar tabla de reservas del administrador**
+        if (app.getReservasTablaPanel() != null) {
+            app.getReservasTablaPanel().actualizarTabla(administrador); // Llama al método que actualiza la tabla de reservas
+        }
+    }
+
+
 
     private void agregarLaboratorio() {
         String nombreLaboratorio = txtLaboratorio.getText().trim();
@@ -190,16 +244,5 @@ public class AdminGestionPanel extends JPanel {
         actualizarTablaLaboratorios();
     }
 
-    private void eliminarLaboratorio() {
-        int selectedRow = tablaLaboratorios.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un laboratorio para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
-        String nombreLaboratorio = (String) tablaLaboratorios.getValueAt(selectedRow, 0);
-        app.eliminarLaboratorio(nombreLaboratorio);
-        JOptionPane.showMessageDialog(this, "Laboratorio eliminado exitosamente.");
-        actualizarTablaLaboratorios();
-    }
 }

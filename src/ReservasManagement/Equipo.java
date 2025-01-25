@@ -103,6 +103,14 @@ public class Equipo {
         return "Requiere mantenimiento preventivo".equals(estado); // Determina si requiere mantenimiento preventivo
     }
 
+    public void setRequiereMantenimientoCorrectivo(boolean requiereMantenimientoCorrectivo) {
+        this.requiereMantenimientoCorrectivo = requiereMantenimientoCorrectivo;
+    }
+
+    public void setRequiereMantenimientoPreventivo(boolean requiereMantenimientoPreventivo) {
+        this.requiereMantenimientoPreventivo = requiereMantenimientoPreventivo;
+    }
+
     public boolean requiereCalibracion() {
         // Lógica para determinar si el equipo necesita calibración
         return false; // Ejemplo: actualmente no se implementa

@@ -101,7 +101,7 @@ public class App {
         }
 
         if (!Usuario.validarcedula(cedula)) {
-            throw new Exception("Cédula inválida. Debe ingresar 10 caracteres numéricos.");
+            throw new Exception("Cédula inválida.");
         }
 
         if (!Usuario.validarNombre(nombre)) {
@@ -193,6 +193,17 @@ public class App {
         equipos.remove(equipo);
     }
 
+    public void agregarDiasDeUso(Equipo equipo, int duracion) {
+        int index = equipos.indexOf(equipo);
+        if (index != -1) {
+            equipos.get(index).agregarDiasDeUso(duracion);
+        }
+    }
+
+    public Equipo obtenerEquipo(Equipo equipo) {
+        int index = equipos.indexOf(equipo);
+        return index != -1 ? equipos.get(index) : null;
+    }
 
     public Equipo buscarEquipoPorNombre(String nombre) {
         return equipos.stream()

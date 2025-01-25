@@ -37,7 +37,7 @@ public class EstudiantePanel extends JPanel {
         // Crear pestañas
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Reserva de Laboratorio", panelLaboratorio);
-        tabbedPane.addTab("Préstamo de Equipo", panelEquipo);
+        tabbedPane.addTab("Reserva de Equipo", panelEquipo);
 
         // Añadir componentes
         add(panelTabla, BorderLayout.NORTH);

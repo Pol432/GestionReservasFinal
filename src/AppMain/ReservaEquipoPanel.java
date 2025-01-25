@@ -100,9 +100,9 @@ public class ReservaEquipoPanel extends JPanel {
             app.agregarReserva(reserva);
 
             equipo.setPrestado(true);
-            equipo.agregarDiasDeUso(duracion);
+            app.agregarDiasDeUso(equipo, duracion);
 
-            if (equipo.getDiasDeUso() > 3) {
+            if (app.obtenerEquipo(equipo).getDiasDeUso() > 3) {
                 JOptionPane.showMessageDialog(this,
                         "El equipo " + equipo.getNombre() + " ahora requiere mantenimiento.",
                         "Aviso",
